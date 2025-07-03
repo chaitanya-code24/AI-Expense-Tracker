@@ -7,15 +7,6 @@ import { useRouter } from "next/navigation"; // Add this import
 
 const categories = ["Food", "Entertainment", "Transport", "Shopping", "Other"];
 
-const pieColors = [
-    "#6366f1", // indigo-500
-    "#a21caf", // purple-700
-    "#f472b6", // pink-400
-    "#f59e42", // orange-400
-    "#22d3ee", // cyan-400
-    "#84cc16", // lime-500
-];
-
 // --- Glass Aura Pie Chart Component ---
 function GlassAuraPie({
   data,

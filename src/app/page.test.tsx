@@ -1,5 +1,6 @@
-const { render, screen } = require('@testing-library/react');
-const Page = require('./page');
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Page from './page';
 
 test('renders page without crashing', () => {
 	render(<Page />);
