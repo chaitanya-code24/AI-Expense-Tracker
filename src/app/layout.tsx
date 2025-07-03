@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Expense Tracker",
+  title: "BlinqTrack AI",
   description: "get smart insights on your expenses with AI",
 };
 
