@@ -16,92 +16,6 @@ const pieColors = [
     "#84cc16", // lime-500
 ];
 
-function PieChart({ data, size = 220 }: { data: Record<string, number>, size?: number }) {
-    const total = Object.values(data).reduce((a, b) => a + b, 0);
-    let cumulative = 0;
-    const radius = size / 2 - 16;
-    const cx = size / 2;
-    const cy = size / 2;
-
-    const slices = Object.entries(data).map(([cat, amt], i) => {
-        const value = amt / total;
-        const startAngle = cumulative * 360;
-        const endAngle = (cumulative + value) * 360;
-        cumulative += value;
-
-        // Convert angles to radians
-        const startRadians = (startAngle - 90) * (Math.PI / 180);
-        const endRadians = (endAngle - 90) * (Math.PI / 180);
-
-        // Calculate coordinates
-        const x1 = cx + radius * Math.cos(startRadians);
-        const y1 = cy + radius * Math.sin(startRadians);
-        const x2 = cx + radius * Math.cos(endRadians);
-        const y2 = cy + radius * Math.sin(endRadians);
-
-        // Large arc flag
-        const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
-
-        const pathData = [
-            `M ${cx} ${cy}`,
-            `L ${x1} ${y1}`,
-            `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-            "Z",
-        ].join(" ");
-
-        return (
-            <g key={cat}>
-                <path
-                    d={pathData}
-                    fill={pieColors[i % pieColors.length]}
-                    stroke="#fff"
-                    strokeWidth={2}
-                    style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.08))" }}
-                />
-                {/* Add percentage label */}
-                {value > 0.08 && (
-                    <text
-                        x={cx + (radius / 1.7) * Math.cos((startRadians + endRadians) / 2)}
-                        y={cy + (radius / 1.7) * Math.sin((startRadians + endRadians) / 2)}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        className="text-xs font-bold"
-                        fill="#fff"
-                        style={{ textShadow: "0 1px 4px rgba(0,0,0,0.25)" }}
-                    >
-                        {Math.round(value * 100)}%
-                    </text>
-                )}
-            </g>
-        );
-    });
-
-    // Center circle for donut effect
-    return (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-            {slices}
-            <circle
-                cx={cx}
-                cy={cy}
-                r={radius * 0.55}
-                fill="rgba(255,255,255,0.85)"
-                stroke="#e5e7eb"
-                strokeWidth="2"
-            />
-            <text
-                x={cx}
-                y={cy}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="text-lg font-bold"
-                fill="#6366f1"
-            >
-                ₹{total}
-            </text>
-        </svg>
-    );
-}
-
 // --- Glass Aura Pie Chart Component ---
 function GlassAuraPie({
   data,
@@ -276,6 +190,17 @@ function getLegendGradient(i: number) {
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
 }
 
+// 1. Remove PieChart component (delete everything from "function PieChart..." to its closing brace)
+
+// 2. Define a type for expenses
+type Expense = {
+    _id?: string;
+    amount: number;
+    category: string;
+    description: string;
+    paymentMethod?: string;
+};
+
 export default function Dashboard() {
     const [tab, setTab] = useState("dashboard");
     const [input, setInput] = useState({
@@ -284,7 +209,8 @@ export default function Dashboard() {
         description: "",
         paymentMethod: "",
     });
-    const [expenseList, setExpenseList] = useState<any[]>([]);
+    // 3. Use Expense[] instead of any[]
+    const [expenseList, setExpenseList] = useState<Expense[]>([]);
     const router = useRouter();
 
     // Fetch expenses from backend on mount
@@ -296,7 +222,7 @@ export default function Dashboard() {
                     const data = await res.json();
                     setExpenseList(data.expenses || []);
                 }
-            } catch (error) {
+            } catch {
                 // Optionally handle error
             }
         }
@@ -346,7 +272,7 @@ export default function Dashboard() {
                 // Handle error (optional)
                 alert("Failed to add expense.");
             }
-        } catch (error) {
+        } catch {
             alert("Error connecting to backend.");
         }
     };
