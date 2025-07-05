@@ -1,5 +1,5 @@
-import ClientWrapper from "./ClientWrapper";
+import Dashboard from "./DashboardContent";
 
 export default function DashboardPage() {
-  return <ClientWrapper />;
+  return <Dashboard />;
 }
