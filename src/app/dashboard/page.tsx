@@ -294,6 +294,12 @@ export default function Dashboard() {
     };
 
     return (
+        <>
+    {loading && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-md">
+        <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )}
         <main
             className={
                 darkMode
@@ -648,5 +654,5 @@ export default function Dashboard() {
                 )}
             </div>
         </main>
-    );
+    </>);
 }

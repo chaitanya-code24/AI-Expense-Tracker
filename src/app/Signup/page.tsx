@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth } from "../firebase";
 import {
@@ -19,7 +20,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
@@ -30,8 +31,12 @@ export default function SignupPage() {
       }
       setMessage("Signup successful! Redirecting...");
       router.push(`/dashboard?name=${encodeURIComponent(name)}`);
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("An unknown error occurred.");
+      }
     }
     setLoading(false);
   };
@@ -44,21 +49,26 @@ export default function SignupPage() {
       await signInWithPopup(auth, provider);
       setMessage("Signup with Google successful! Redirecting...");
       router.push("/dashboard");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("An unknown error occurred.");
+      }
     }
     setLoading(false);
   };
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-neutral-200 overflow-hidden">
-      {/* 3D Glassmorphism Blobs */}
+      {/* Blurred background effects */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-tr from-indigo-200 via-white to-pink-100 opacity-70 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-br from-pink-200 via-white to-indigo-100 opacity-60 rounded-full blur-2xl animate-pulse delay-2000" />
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-neutral-100 via-white to-indigo-100 opacity-40 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
       </div>
-      {/* Card */}
+
+      {/* Sign-up Card */}
       <div className="relative z-10 w-full max-w-sm bg-white/80 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-neutral-100 backdrop-blur-md">
         <div className="flex flex-col items-center gap-2">
           <div className="w-14 h-14 rounded-full bg-neutral-900 flex items-center justify-center shadow-lg mb-2">
@@ -72,6 +82,8 @@ export default function SignupPage() {
           </h1>
           <p className="text-neutral-400 text-sm">Sign up to get started</p>
         </div>
+
+        {/* Feedback Message */}
         {message && (
           <div
             className={`text-center text-xs mt-2 ${
@@ -83,13 +95,15 @@ export default function SignupPage() {
             {message}
           </div>
         )}
+
+        {/* Form */}
         <form className="flex flex-col gap-4" onSubmit={handleSignup}>
           <input
             type="text"
             placeholder="Full Name"
             className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             required
           />
           <input
@@ -97,7 +111,7 @@ export default function SignupPage() {
             placeholder="Email"
             className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
@@ -105,9 +119,10 @@ export default function SignupPage() {
             placeholder="Password"
             className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <button
             type="submit"
             disabled={loading}
@@ -115,11 +130,13 @@ export default function SignupPage() {
           >
             {loading ? "Signing up..." : "Sign Up"}
           </button>
+
           <div className="flex items-center my-2">
             <div className="flex-1 h-px bg-neutral-200" />
             <span className="mx-2 text-neutral-400 text-xs">or</span>
             <div className="flex-1 h-px bg-neutral-200" />
           </div>
+
           <button
             type="button"
             onClick={handleGoogleSignup}
@@ -136,14 +153,15 @@ export default function SignupPage() {
             />
             <span className="text-neutral-900 font-medium">Continue with Google</span>
           </button>
+
           <div className="text-center text-xs text-neutral-500 mt-4">
             Already have an account?{" "}
-            <a
+            <Link
               href="/"
               className="text-neutral-900 underline hover:text-indigo-600 transition"
             >
               Login
-            </a>
+            </Link>
           </div>
         </form>
       </div>

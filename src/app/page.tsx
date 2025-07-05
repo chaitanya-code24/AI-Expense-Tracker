@@ -24,9 +24,13 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setMessage("Login successful!");
-      router.push("/dashboard"); // Redirect to dashboard
-    } catch (err: any) {
-      setMessage(err.message);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("Login failed.");
+      }
     }
   };
 
@@ -36,8 +40,12 @@ export default function LoginPage() {
     try {
       await sendPasswordResetEmail(auth, email);
       setMessage("Password reset link sent!");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("Failed to send reset link.");
+      }
     }
   };
 
@@ -47,21 +55,26 @@ export default function LoginPage() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       setMessage("Google login successful!");
-      router.push("/dashboard"); // Redirect to dashboard
-    } catch (err: any) {
-      setMessage(err.message);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("Google login failed.");
+      }
     }
   };
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-neutral-200 overflow-hidden">
-      {/* 3D Glassmorphism Blobs */}
+      {/* Glass Blobs */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-tr from-indigo-200 via-white to-pink-100 opacity-70 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-br from-pink-200 via-white to-indigo-100 opacity-60 rounded-full blur-2xl animate-pulse delay-2000" />
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-neutral-100 via-white to-indigo-100 opacity-40 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
       </div>
-      {/* Card */}
+
+      {/* Login Card */}
       <div className="relative z-10 w-full max-w-sm bg-white/80 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-neutral-100 backdrop-blur-md">
         <div className="flex flex-col items-center gap-2">
           <div className="w-14 h-14 rounded-full bg-neutral-900 flex items-center justify-center shadow-lg mb-2">
@@ -75,9 +88,11 @@ export default function LoginPage() {
           </h1>
           <p className="text-neutral-400 text-sm">Sign in to your account</p>
         </div>
+
         {message && (
           <div className="text-center text-xs text-red-500">{message}</div>
         )}
+
         {!forgot ? (
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <input
@@ -85,7 +100,7 @@ export default function LoginPage() {
               placeholder="Email"
               className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <input
@@ -93,7 +108,7 @@ export default function LoginPage() {
               placeholder="Password"
               className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             <button
@@ -146,7 +161,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
               className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <button
