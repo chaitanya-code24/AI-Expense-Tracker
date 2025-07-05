@@ -25,7 +25,7 @@ export default function SignupPage() {
     setMessage("");
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       if (auth.currentUser && name) {
         await updateProfile(auth.currentUser, { displayName: name });
       }
