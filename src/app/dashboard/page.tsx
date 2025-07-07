@@ -1,10 +1,6 @@
-import dynamic from "next/dynamic";
-
-// Load client-only Dashboard dynamically
-const DashboardClient = dynamic(() => import("./DashboardClient"), {
-  ssr: false,
-});
+"use client";
+import Dashboard from "./DashboardClient";
 
 export default function DashboardPage() {
-  return <DashboardClient />;
+  return <Dashboard />;
 }
