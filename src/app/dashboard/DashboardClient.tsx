@@ -219,8 +219,10 @@ export default function Dashboard() {
         setLoading(true);
         try {
             const res = await fetch(`https://backend-expense-tracker-kkr0.onrender.com/expenses?uid=${userId}`);
+            
             if (res.ok) {
                 const data = await res.json();
+                console.log("Expenses response:", data);
                 setExpenseList(data.expenses || []);
             }
         } catch {
