@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 // Dummy data for chart and expenses
 
-const categories = ["Food", "Entertainment", "Transport", "Shopping", "Other"];
+const categories = ["🍴 Food", "🥤 Drinks & Snacks", "🛺 Transport", "🚬 Addiction", "🧼 Groceries / Essentials","🍕 Junk Food / Takeout", "🏠 Stay / Rent","🎭 Entertainment","other"];
 
 // --- Glass Aura Pie Chart Component ---
 function GlassAuraPie({
