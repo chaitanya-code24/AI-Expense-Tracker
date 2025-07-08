@@ -209,7 +209,7 @@ export default function Dashboard() {
     const [uid, setUid] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
-    const [userName, setUserName] = useState<string | null>(null);
+    
     const router = useRouter();
     
 
@@ -279,7 +279,7 @@ export default function Dashboard() {
                     description: input.description,
                     paymentMethod: input.paymentMethod,
                     uid: uid,
-                    name: userName, // <-- Add this line
+                     // <-- Add this line
                 }),
             });
             if (res.ok) {
@@ -319,7 +319,7 @@ export default function Dashboard() {
         <span className={darkMode
             ? "text-sm text-white/70 font-medium mt-1"
             : "text-sm text-black/70 font-medium mt-1"}>
-            Welcome, {userName || "User"}
+            Welcome,
         </span>
     </div>
 
