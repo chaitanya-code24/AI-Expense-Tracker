@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
 type Message = { sender: "user" | "bot"; text: string };
 
 export default function AIChatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "bot", text: "Hi! Log an expense or ask for a report." }
+    { sender: "bot", text: "Hi! Log an expense or ask about your spending." }
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -16,50 +18,76 @@ export default function AIChatbot() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function sendMessage() {
+  const sendMessage = async () => {
     if (!input.trim()) return;
-    setMessages((msgs) => [...msgs, { sender: "user", text: input }]);
+
+    const userMessage = input;
+    setMessages((msgs) => [...msgs, { sender: "user", text: userMessage }]);
     setInput("");
-    setTimeout(() => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `https://backend-expense-tracker-kkr0.onrender.com/chat?query=${encodeURIComponent(userMessage)}`,
+        {
+          method: "POST"
+        }
+      );
+
+      const data = await res.json();
+      const response =
+        data?.answer || data?.message || "Sorry, I couldn't understand.";
+
+      setMessages((msgs) => [...msgs, { sender: "bot", text: response }]);
+    } catch (err) {
       setMessages((msgs) => [
         ...msgs,
-        { sender: "bot", text: "This is a demo. Backend not connected." }
+        { sender: "bot", text: "⚠️ Failed to connect to backend." }
       ]);
-    }, 500);
-  }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white text-black flex flex-col">
       {/* Back Button */}
       <div className="max-w-2xl mx-auto w-full px-2 md:px-0 pt-6 pb-2">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-black text-sm font-medium hover:underline"
+          className="flex items-center gap-2 text-sm font-medium hover:underline"
         >
-          <span className="text-xl">&#8592;</span>
-          Back
+          <span className="text-xl">&#8592;</span> Back
         </button>
-        <h1 className="text-3xl font-bold text-black mt-6 mb-2">AI Chat</h1>
+        <h1 className="text-3xl font-bold mt-6 mb-2">💬 AI Chat</h1>
       </div>
+
       {/* Chat Window */}
-      <div className="flex-1 overflow-y-auto px-0 py-8 md:px-0 md:py-12">
-        <div className="max-w-2xl mx-auto space-y-4 px-2 md:px-0">
+      <div className="flex-1 overflow-y-auto px-2 py-6 md:px-0 md:py-8">
+        <div className="max-w-2xl mx-auto space-y-4">
           {messages.map((msg, i) => (
             <div
               key={i}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-2 text-base rounded-xl max-w-[75%] ${
+                className={`px-4 py-3 rounded-xl text-sm max-w-[75%] whitespace-pre-line ${
                   msg.sender === "user"
                     ? "bg-black text-white rounded-br-none"
-                    : "bg-neutral-100 text-neutral-900 border border-neutral-200 rounded-bl-none"
+                    : "bg-neutral-100 text-black border border-neutral-300 rounded-bl-none"
                 }`}
               >
-                {msg.text}
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="px-4 py-2 text-sm bg-neutral-100 text-black border border-neutral-300 rounded-xl rounded-bl-none animate-pulse">
+                Thinking...
+              </div>
+            </div>
+          )}
           <div ref={chatEndRef} />
         </div>
       </div>
@@ -74,7 +102,7 @@ export default function AIChatbot() {
       >
         <div className="max-w-2xl mx-auto flex items-center px-2 md:px-0 py-4">
           <input
-            className="flex-1 px-4 py-3 text-base bg-neutral-100 rounded-lg border border-neutral-200 focus:outline-none focus:border-black focus:bg-white text-neutral-900 placeholder-neutral-500 transition-all shadow-sm"
+            className="flex-1 px-4 py-3 text-base bg-neutral-100 rounded-lg border border-neutral-200 focus:outline-none focus:border-black focus:bg-white text-black placeholder-neutral-500 transition-all shadow-sm"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
