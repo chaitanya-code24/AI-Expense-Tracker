@@ -218,7 +218,7 @@ export default function Dashboard() {
     const fetchExpenses = async (userId: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`http://127.0.0.1:8000/expenses?uid=${userId}`);
+            const res = await fetch(`https://backend-expense-tracker-kkr0.onrender.com/expenses?uid=${userId}`);
             
             if (res.ok) {
                 const data = await res.json();
@@ -272,7 +272,7 @@ export default function Dashboard() {
             return;
         }
         try {
-            const res = await fetch("http://127.0.0.1:8000/add-expense", {
+            const res = await fetch("https://backend-expense-tracker-kkr0.onrender.com/add-expense", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -623,7 +623,7 @@ export default function Dashboard() {
                                                     onClick={async () => {
                                                         if (!e._id) return;
                                                         try {
-                                                            const res = await fetch(`http://127.0.0.1:8000/expense_del/${e._id}`, {
+                                                            const res = await fetch(`https://backend-expense-tracker-kkr0.onrender.com/expense_del/${e._id}`, {
                                                                 method: "DELETE",
                                                             });
                                                             if (res.ok) {

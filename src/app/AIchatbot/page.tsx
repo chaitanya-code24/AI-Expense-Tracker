@@ -28,7 +28,7 @@ export default function AIChatbot() {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/chat?query=${encodeURIComponent(userMessage)}`,
+        `https://backend-expense-tracker-kkr0.onrender.com/chat?query=${encodeURIComponent(userMessage)}`,
         {
           method: "POST"
         }
