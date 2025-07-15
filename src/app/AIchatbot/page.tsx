@@ -28,7 +28,7 @@ export default function AIChatbot() {
 
     try {
       const res = await fetch(
-        `https://backend-expense-tracker-kkr0.onrender.com/chat?query=${encodeURIComponent(userMessage)}`,
+        `http://127.0.0.1:8000/chat?query=${encodeURIComponent(userMessage)}`,
         {
           method: "POST"
         }
@@ -42,7 +42,7 @@ export default function AIChatbot() {
     } catch (err) {
       setMessages((msgs) => [
         ...msgs,
-        { sender: "bot", text: "⚠️ Failed to connect to backend." }
+        { sender: "bot", text: "⚠️ Failed to connect to backend.",err }
       ]);
     } finally {
       setLoading(false);
