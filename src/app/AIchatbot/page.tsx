@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import { useSearchParams } from "next/navigation";
+
 
 type Message = { sender: "user" | "bot"; text: string };
 
@@ -10,6 +12,8 @@ export default function AIChatbot() {
     { sender: "bot", text: "Hi! Log an expense or ask about your spending." }
   ]);
   const [input, setInput] = useState("");
+  const searchParams = useSearchParams();
+  const uid = searchParams.get("uid");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -28,7 +32,7 @@ export default function AIChatbot() {
 
     try {
       const res = await fetch(
-        `https://backend-expense-tracker-sd03.onrender.com/chat?query=${encodeURIComponent(userMessage)}`,
+        `https://backend-expense-tracker-sd03.onrender.com/chat?query=${encodeURIComponent(userMessage)}&uid=${uid}`,
         {
           method: "POST"
         }

@@ -427,7 +427,8 @@ export default function Dashboard() {
                                         ? "border-neutral-800 bg-gradient-to-br from-neutral-900 via-black to-neutral-800"
                                         : "border-neutral-200 bg-black"
                                 }`}
-                                onClick={() => router.push("/AIchatbot")}
+                                onClick={() => router.push(`/AIchatbot?uid=${uid}`)}
+
                                 role="button"
                                 tabIndex={0}
                                 onKeyDown={e => { if (e.key === "Enter") router.push("/AIchatbot"); }}
