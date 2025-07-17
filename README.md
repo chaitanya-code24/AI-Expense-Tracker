@@ -35,9 +35,9 @@ An advanced expense tracking system powered by LLMs and vector databases. Easily
 ### Clone the repo
 
 ```bash
+# Clone the frontend repo
 git clone https://github.com/your-username/AI-expense-tracker.git
 cd AI-expense-tracker
-# Clone the frontend repo
 
 # Install dependencies
 npm install
