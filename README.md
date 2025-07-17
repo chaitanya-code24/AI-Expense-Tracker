@@ -30,7 +30,7 @@ An advanced expense tracking system powered by LLMs and vector databases. Easily
 ## 🛠️ Setup Instructions
 ## 🔗 Related Repositories
 
-- **🔙 Backend Repo:** [AI Expense Tracker – FastAPI Backend](https://github.com/your-username/ai-expense-backend)
+- **🔙 Backend Repo:** [AI Expense Tracker – FastAPI Backend](https://github.com/chaitanya-code24/backend_expense-tracker)
 
 ### Clone the repo
 
