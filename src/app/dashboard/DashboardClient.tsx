@@ -5,12 +5,12 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
+import { formatDistanceToNow } from "date-fns";
 
 
 // Dummy data for chart and expenses
 
-const categories = ["🍴 Food", "🥤 Drinks & Snacks", "🛺 Transport", "🚬 Addiction", "🧼 Groceries / Essentials","🍕 Junk Food / Takeout", "🏠 Stay / Rent","🎭 Entertainment","other"];
+const categories = ["🍴 Food", "🥤 Drinks & Snacks", "🛺 Transport", "🚬 Addiction", "🧼 Groceries / Essentials","🍕 Junk Food ", "🏠 Stay / Rent","🎭 Entertainment","other"];
 
 // --- Glass Aura Pie Chart Component ---
 function GlassAuraPie({
@@ -195,6 +195,7 @@ type Expense = {
     category: string;
     description: string;
     paymentMethod?: string;
+    timestamp?: string;
 };
 
 export default function Dashboard() {
@@ -204,6 +205,7 @@ export default function Dashboard() {
         category: "",
         description: "",
         paymentMethod: "",
+        
     });
     const [darkMode, setDarkMode] = useState(false);
     const [uid, setUid] = useState<string | null>(null);
@@ -583,75 +585,79 @@ export default function Dashboard() {
                             </div>
                             {/* Recent Expenses Card */}
                             <div className={`break-inside-avoid rounded-2xl border p-8 mb-8 flex flex-col shadow-lg hover:scale-[1.01] transition-all duration-200 ${
-                                darkMode
-                                    ? "border-neutral-800 bg-neutral-900/80"
-                                    : "border-neutral-200 bg-white/80"
-                            }`}>
-                                <span className={`uppercase text-xs mb-4 tracking-widest text-center ${
-                                    darkMode ? "text-neutral-400" : "text-neutral-400"
-                                }`}>Recent Expenses</span>
-                                <div className="flex flex-col gap-2">
-                                    {expenseList.slice(0, 5).map((e, i) => (
-                                        <div
-                                            key={e._id || i}
-                                            className={`flex justify-between items-center border rounded-xl px-4 py-3 transition ${
-                                                darkMode
-                                                    ? "border-neutral-800 bg-neutral-800 hover:bg-neutral-700"
-                                                    : "border-neutral-100 bg-neutral-50 hover:bg-neutral-200"
-                                            }`}
-                                        >
-                                            <div>
-                                                <span className={`font-semibold ${
-                                                    darkMode ? "text-white" : "text-neutral-800"
-                                                }`}>{e.description}</span>
-                                                <span className={`text-xs ml-2 ${
-                                                    darkMode ? "text-neutral-400" : "text-neutral-400"
-                                                }`}>{e.category}</span>
-                                                {e.paymentMethod && (
-                                                    <span className={`text-xs ml-2 ${
-                                                        darkMode ? "text-neutral-500" : "text-neutral-500"
-                                                    }`}>
-                                                        • {e.paymentMethod}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`font-mono text-lg ${
-                                                    darkMode ? "text-neutral-200" : "text-neutral-700"
-                                                }`}>₹{e.amount}</span>
-                                                {/* Delete Button */}
-                                                <button
-                                                    onClick={async () => {
-                                                        if (!e._id) return;
-                                                        try {
-                                                            const res = await fetch(`https://backend-expense-tracker-sd03.onrender.com/expense_del/${e._id}`, {
-                                                                method: "DELETE",
-                                                            });
-                                                            if (res.ok) {
-                                                                setExpenseList(expenseList.filter((exp) => exp._id !== e._id));
-                                                            } else {
-                                                                alert("Failed to delete expense.");
-                                                            }
-                                                        } catch {
-                                                            alert("Error connecting to backend.");
-                                                        }
-                                                    }}
-                                                    className={`ml-2 px-2 py-1 rounded text-xs font-semibold transition ${
-                                                        darkMode
-                                                            ? "bg-red-900 hover:bg-red-700 text-red-200"
-                                                            : "bg-red-100 hover:bg-red-200 text-red-600"
-                                                    }`}
-                                                    title="Delete"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {expenseList.length === 0 && (
-                                        <div className={darkMode ? "text-neutral-500" : "text-neutral-400"}>No expenses yet.</div>
-                                    )}
-                                </div>
+    darkMode ? "border-neutral-800 bg-neutral-900/80" : "border-neutral-200 bg-white/80"
+}`}>
+    <span className={`uppercase text-xs mb-4 tracking-widest text-center ${
+        darkMode ? "text-neutral-400" : "text-neutral-400"
+    }`}>
+        Recent Expenses
+    </span>
+    <div className="flex flex-col gap-2">
+        {expenseList.slice().reverse().slice(0, 5).map((e, i) => (
+            <div
+                key={e._id || i}
+                className={`flex justify-between items-center border rounded-xl px-4 py-3 transition ${
+                    darkMode
+                        ? "border-neutral-800 bg-neutral-800 hover:bg-neutral-700"
+                        : "border-neutral-100 bg-neutral-50 hover:bg-neutral-200"
+                }`}
+            >
+                <div>
+                    <span className={`font-semibold ${darkMode ? "text-white" : "text-neutral-800"}`}>
+                        {e.description}
+                    </span>
+                    <span className={`text-xs ml-2 ${darkMode ? "text-neutral-400" : "text-neutral-400"}`}>
+                        {e.category}
+                    </span>
+                    {e.paymentMethod && (
+                        <span className={`text-xs ml-2 ${darkMode ? "text-neutral-500" : "text-neutral-500"}`}>
+                            • {e.paymentMethod}
+                        </span>
+                    )}
+                    {e.timestamp && (
+                        <span className={`text-xs ml-2 ${darkMode ? "text-neutral-500" : "text-neutral-500"}`}>
+                            • {formatDistanceToNow(new Date(e.timestamp), { addSuffix: true })}
+                        </span>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className={`font-mono text-lg ${darkMode ? "text-neutral-200" : "text-neutral-700"}`}>
+                        ₹{e.amount}
+                    </span>
+                    <button
+                        onClick={async () => {
+                            if (!e._id) return;
+                            try {
+                                const res = await fetch(`https://backend-expense-tracker-sd03.onrender.com/expense_del/${e._id}`, {
+                                    method: "DELETE",
+                                });
+                                if (res.ok) {
+                                    setExpenseList(expenseList.filter((exp) => exp._id !== e._id));
+                                } else {
+                                    alert("Failed to delete expense.");
+                                }
+                            } catch {
+                                alert("Error connecting to backend.");
+                            }
+                        }}
+                        className={`ml-2 px-2 py-1 rounded text-xs font-semibold transition ${
+                            darkMode
+                                ? "bg-red-900 hover:bg-red-700 text-red-200"
+                                : "bg-red-100 hover:bg-red-200 text-red-600"
+                        }`}
+                        title="Delete"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        ))}
+        {expenseList.length === 0 && (
+            <div className={darkMode ? "text-neutral-500" : "text-neutral-400"}>
+                No expenses yet.
+            </div>
+        )}
+    </div>
                             </div>
                         </div>
                     </section>

@@ -1,185 +1,112 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { auth } from "./firebase"; // Adjust path if needed
-import {
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "./firebase";
+import { useUser } from "../app/context/usercontext";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [forgot, setForgot] = useState(false);
-  const [message, setMessage] = useState("");
+export default function LandingPage() {
   const router = useRouter();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      setMessage("Login successful!");
-      router.push("/dashboard");
-    } catch (err) {
-      if (err instanceof Error) {
-        setMessage(err.message);
-      } else {
-        setMessage("Login failed.");
-      }
-    }
-  };
-
-  const handleForgot = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset link sent!");
-    } catch (err) {
-      if (err instanceof Error) {
-        setMessage(err.message);
-      } else {
-        setMessage("Failed to send reset link.");
-      }
-    }
-  };
+  const { setUid } = useUser();
 
   const handleGoogleLogin = async () => {
-    setMessage("");
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      setMessage("Google login successful!");
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUid(user.uid);
       router.push("/dashboard");
-    } catch (err) {
-      if (err instanceof Error) {
-        setMessage(err.message);
-      } else {
-        setMessage("Google login failed.");
-      }
+    } catch (error) {
+      console.error("Google login failed", error);
     }
   };
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-neutral-200 overflow-hidden">
-      {/* Glass Blobs */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-tr from-indigo-200 via-white to-pink-100 opacity-70 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-br from-pink-200 via-white to-indigo-100 opacity-60 rounded-full blur-2xl animate-pulse delay-2000" />
-        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-neutral-100 via-white to-indigo-100 opacity-40 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
-      </div>
+    <main className="relative min-h-screen bg-gradient-to-br from-zinc-900 via-black to-zinc-800 overflow-hidden text-white font-sans">
+      {/* Blobs */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-purple-700 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" />
+      <div className="absolute top-1/3 right-10 w-[300px] h-[300px] bg-pink-600 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse delay-1000" />
 
-      {/* Login Card */}
-      <div className="relative z-10 w-full max-w-sm bg-white/80 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-neutral-100 backdrop-blur-md">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 rounded-full bg-neutral-900 flex items-center justify-center shadow-lg mb-2">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="12" fill="#fff" />
-              <path d="M7 17V7h10v10H7z" fill="#111" />
-            </svg>
+      {/* Navbar */}
+      <header className="relative z-20 flex justify-between items-center px-6 py-4 max-w-6xl mx-auto">
+        <h1 className="text-xl font-bold tracking-tight text-white">
+          Blinq<span className="text-purple-400">Track</span>AI
+        </h1>
+        <nav className="flex gap-6 text-sm text-gray-300">
+          <a href="#home" className="hover:text-white">Home</a>
+          <a href="#features" className="hover:text-white">Features</a>
+          <a href="#about" className="hover:text-white">About</a>
+        </nav>
+        <button
+          onClick={handleGoogleLogin}
+          className="bg-white text-black px-5 py-2 rounded-full hover:bg-gray-200 transition text-sm shadow"
+        >
+          Get Started
+        </button>
+      </header>
+
+      {/* Hero Section */}
+      <section id="home" className="relative z-10 flex flex-col items-center px-6 py-32 gap-6 text-center max-w-4xl mx-auto">
+        <h2 className="text-5xl md:text-6xl font-bold leading-tight">
+          Smarter Spending Starts Here
+        </h2>
+        <p className="text-lg text-gray-300 max-w-xl">
+          AI-powered insights, effortless expense tracking, and a beautiful minimalist interface.
+        </p>
+        <button
+          onClick={handleGoogleLogin}
+          className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full text-white font-medium text-sm mt-4 transition"
+        >
+          Get Started
+        </button>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="bg-black py-20 px-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold mb-10">Features</h2>
+          <div className="grid md:grid-cols-3 gap-8 text-left">
+            {[
+              {
+                title: "Instant Expense Input",
+                desc: "Add expenses with plain text like “Spent 50 on lunch.”",
+              },
+              {
+                title: "AI Categorization",
+                desc: "Automatically tags and organizes your spending using LLMs.",
+              },
+              {
+                title: "Insightful Chatbot",
+                desc: "Ask your AI assistant for reports or trends in your spending.",
+              },
+            ].map((item, idx) => (
+              <div key={idx} className="bg-zinc-800 p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 className="font-semibold text-lg mb-2 text-white">{item.title}</h3>
+                <p className="text-sm text-gray-400">{item.desc}</p>
+              </div>
+            ))}
           </div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 tracking-tight">
-            Welcome Back
-          </h1>
-          <p className="text-neutral-400 text-sm">Sign in to your account</p>
         </div>
+      </section>
 
-        {message && (
-          <div className="text-center text-xs text-red-500">{message}</div>
-        )}
+      {/* About */}
+      <section id="about" className="bg-white text-gray-800 py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl font-semibold">Why We Built This</h2>
+          <p className="text-gray-600 text-lg">
+            Managing your finances shouldn’t feel like filling spreadsheets.
+            BlinqTrackAI combines intelligent automation and minimal UI to give you clarity,
+            not clutter — so you can focus on what matters.
+          </p>
+        </div>
+      </section>
 
-        {!forgot ? (
-          <form className="flex flex-col gap-4" onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="bg-neutral-900 text-white rounded-xl py-2 font-semibold hover:bg-neutral-800 transition shadow"
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              className="text-neutral-500 text-xs underline mt-1 hover:text-neutral-900 transition"
-              onClick={() => setForgot(true)}
-            >
-              Forgot password?
-            </button>
-            <div className="flex items-center my-2">
-              <div className="flex-1 h-px bg-neutral-200" />
-              <span className="mx-2 text-neutral-400 text-xs">or</span>
-              <div className="flex-1 h-px bg-neutral-200" />
-            </div>
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="flex items-center justify-center gap-2 border border-neutral-200 rounded-xl py-2 bg-white hover:bg-neutral-100 transition shadow"
-            >
-              <Image
-                src="/google.svg"
-                alt="Google"
-                width={20}
-                height={20}
-                className="inline"
-                priority
-              />
-              <span className="text-neutral-900 font-medium">Continue with Google</span>
-            </button>
-            <div className="text-center text-xs text-neutral-500 mt-4">
-              Don&apos;t have an account?{" "}
-              <a
-                href="/Signup"
-                className="text-neutral-900 underline hover:text-indigo-600 transition"
-              >
-                Sign up
-              </a>
-            </div>
-          </form>
-        ) : (
-          <form className="flex flex-col gap-4" onSubmit={handleForgot}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="border border-neutral-200 bg-neutral-100/70 rounded-xl px-4 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="bg-neutral-900 text-white rounded-xl py-2 font-semibold hover:bg-neutral-800 transition shadow"
-            >
-              Send reset link
-            </button>
-            <button
-              type="button"
-              className="text-neutral-500 text-xs underline mt-1 hover:text-neutral-900 transition"
-              onClick={() => setForgot(false)}
-            >
-              Back to login
-            </button>
-          </form>
-        )}
-      </div>
+      {/* Footer */}
+      <footer className="bg-black text-white text-center py-6 text-sm">
+        Built with ❤️ by BlinqTrackAI Team
+      </footer>
     </main>
   );
 }
