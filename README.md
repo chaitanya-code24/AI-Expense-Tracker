@@ -7,7 +7,7 @@ An advanced expense tracking system powered by LLMs and vector databases. Easily
 - 💬 **AI Chatbot** – Chat with your expenses: Ask “What did I spend on food last week?” or add expenses like “I spent ₹300 on groceries.”
 - 📸 **Bill Photo Upload** – Upload receipts and auto-extract expense data using LLMs.
 - 🧠 **Auto Categorization** – Detect expense categories intelligently.
-- 🗃️ **Vector Memory** – Each expense is embedded and stored in ChromaDB for semantic retrieval.
+- 🗃️ **Vector Memory** – Each expense is embedded and stored in Pinecone for semantic retrieval.
 - 🔐 **Authentication** – Login with Google or email (Firebase Auth).
 - 🌐 **Deployed** – Live on Vercel (Frontend) and Render (Backend).
 
@@ -21,7 +21,7 @@ An advanced expense tracking system powered by LLMs and vector databases. Easily
 | Backend      | FastAPI                              |
 | Database     | MongoDB                              |
 | AI/LLM       | Groq API + LLaMA Models              |
-| Embedding    | SentenceTransformer + ChromaDB       |
+| Embedding    | Pinecone       |
 | Auth         | Firebase Authentication              |
 | Deployment   | Vercel (Frontend), Render (Backend)  |
 
