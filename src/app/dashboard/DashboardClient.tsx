@@ -235,14 +235,14 @@ export default function Dashboard() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUid(user ? user.uid : null);
-            if (user?.uid) {
-                fetchExpenses(user.uid);
+            if (!user) {
+              router.push("/"); // Redirect to landing/login if not logged in
             } else {
-                setExpenseList([]); // Clear on logout
+              setUid(user.uid);
+              fetchExpenses(user.uid);
             }
-        });
-        return () => unsubscribe();
+          });
+          return () => unsubscribe();
     }, []);
 
     // When UID changes (e.g., after login), fetch expenses

@@ -3,7 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { useSearchParams } from "next/navigation";
-
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
 type Message = { sender: "user" | "bot"; text: string };
 
@@ -17,6 +18,15 @@ export default function AIChatbot() {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/"); // Redirect if not authenticated
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +56,7 @@ export default function AIChatbot() {
     } catch (err) {
       setMessages((msgs) => [
         ...msgs,
-        { sender: "bot", text: "⚠️ Failed to connect to backend.",err }
+        { sender: "bot", text: "⚠️ Failed to connect to backend.", err }
       ]);
     } finally {
       setLoading(false);
